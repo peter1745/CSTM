@@ -84,7 +84,7 @@ namespace CSTM {
 	class Result;
 
 	template<typename Fn, typename Arg>
-	constexpr auto InvokeWithOptionalArg(Fn&& fn, Arg&& arg)
+	constexpr auto invoke_with_optional_arg(Fn&& fn, Arg&& arg)
 	{
 		if constexpr (std::is_invocable_v<Fn, Arg>)
 		{
@@ -201,12 +201,12 @@ namespace CSTM {
 
 				if constexpr (std::is_void_v<FnRet>)
 				{
-					InvokeWithOptionalArg(std::forward<Func>(func), std::forward<Arg>(arg));
+					invoke_with_optional_arg(std::forward<Func>(func), std::forward<Arg>(arg));
 					return std::forward<Self>(self);
 				}
 				else
 				{
-					return InvokeWithOptionalArg(std::forward<Func>(func), std::forward<Arg>(arg));
+					return invoke_with_optional_arg(std::forward<Func>(func), std::forward<Arg>(arg));
 				}
 			};
 
@@ -235,7 +235,7 @@ namespace CSTM {
 			{
 				if constexpr (std::same_as<Ret, NullType>)
 				{
-					InvokeWithOptionalArg(
+					invoke_with_optional_arg(
 						std::forward<Func>(func),
 						std::forward_like<Self>(self.m_value).value()
 					);
@@ -245,7 +245,7 @@ namespace CSTM {
 				else
 				{
 					return Result<Ret, E>{
-						InvokeWithOptionalArg(
+						invoke_with_optional_arg(
 							std::forward<Func>(func),
 							std::forward_like<Self>(self.m_value).value()
 						)
@@ -274,7 +274,7 @@ namespace CSTM {
 			{
 				if constexpr (std::same_as<Ret, NullType>)
 				{
-					InvokeWithOptionalArg(
+					invoke_with_optional_arg(
 						std::forward<Func>(func),
 						std::forward_like<Self>(self.m_error)
 					);
@@ -285,7 +285,7 @@ namespace CSTM {
 				{
 					return Result<V, Ret>{
 						ResultErrorTag{},
-						InvokeWithOptionalArg(
+						invoke_with_optional_arg(
 							std::forward<Func>(func),
 							std::forward_like<Self>(self.m_error)
 						)
