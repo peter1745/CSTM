@@ -11,7 +11,8 @@ target_sources(${PROJECT_NAME}
     PUBLIC
         Main.cpp
         Utf8String.cpp
-        Result.cpp)
+        Result.cpp
+        Concepts.cpp)
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE

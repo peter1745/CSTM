@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Concepts.hpp"
 #include "Types.hpp"
 
 #include <array>
@@ -24,12 +25,6 @@ namespace CSTM {
 
 	constexpr NullType Null = NullType{};
 
-	template<typename Func, typename Return, typename... Args>
-	concept SameReturn = requires(Func func, Args&&... args)
-	{
-		{ func(std::forward<Args>(args)...) } -> std::same_as<Return>;
-	};
-
 	template<typename Func, typename... Args>
 	constexpr auto conditional_invoke_result()
 	{
@@ -53,13 +48,6 @@ namespace CSTM {
 	template<typename T>
 	using Optional = std::optional<T>;
 	constexpr std::nullopt_t NullOpt = std::nullopt;
-
-	template<typename T>
-	concept SizedContainer = requires(T t)
-	{
-		{ t.element_count() } -> std::same_as<size_t>;
-		{ t.byte_count() } -> std::same_as<size_t>;
-	};
 
 	template<typename T>
 	struct IsString : std::false_type {};
@@ -100,13 +88,10 @@ namespace CSTM {
 	inline size_t byte_count(const char* str) noexcept { return strlen(str); }
 
 	template<typename Type, template<typename...> typename Template>
-	inline constexpr bool IsSpecializationV = false;
+	inline constexpr bool IsSpecialization = false;
 
 	template<template<typename...> typename Template, typename... Types>
-	inline constexpr bool IsSpecializationV<Template<Types...>, Template> = true;
-
-	template<typename Type, template<typename...> typename Template>
-	struct IsSpecialization : std::bool_constant<IsSpecializationV<Type, Template>> {};
+	inline constexpr bool IsSpecialization<Template<Types...>, Template> = true;
 
 	inline bool is_hexadecimal(byte b) noexcept
 	{
