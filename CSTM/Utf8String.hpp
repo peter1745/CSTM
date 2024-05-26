@@ -379,7 +379,7 @@ namespace CSTM {
 		uint32_t code_point_at(size_t index) const
 		{
 			const auto codePoints = get_code_points();
-			TheiaAssert(index < codePoints.size());
+			CSTM_Assert(index < codePoints.size());
 			return codePoints.at(index);
 		}
 

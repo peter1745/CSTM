@@ -84,7 +84,7 @@ namespace CSTM {
 		auto as_trailing_byte = [](byte b)
 		{
 			// Make sure the byte starts with 0b10xx_xxxx
-			TheiaAssert(b >> 6 == 0b10);
+			CSTM_Assert(b >> 6 == 0b10);
 
 			// Only return the data, ignoring the continuation indicator (0b10)
 			return b & 0b0011'1111;
@@ -139,7 +139,7 @@ namespace CSTM {
 			break;
 		}
 		default:
-			TheiaAssert(false);
+			CSTM_Assert(false);
 			break;
 		}
 

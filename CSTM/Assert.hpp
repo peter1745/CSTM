@@ -1,18 +1,18 @@
 #pragma once
 
 #if defined(_WIN32)
-	#define TheiaDebugBreak __debugbreak()
+	#define CSTM_DebugBreak __debugbreak()
 #elif __has_include(<csignal>)
 	#include <csignal>
-	#define TheiaDebugBreak raise(SIGTRAP)
+	#define CSTM_DebugBreak raise(SIGTRAP)
 #endif
 
-#define TheiaAssert(expr) do {\
+#define CSTM_Assert(expr) do {\
 	if (!(expr))\
 	{\
 		/* TODO(Peter): Log / print error somewhere */ \
-		TheiaDebugBreak;\
+		CSTM_DebugBreak;\
 	}\
 } while (false)
 
-#define TheiaToDo() TheiaAssert(false)
+#define CSTM_ToDo() CSTM_Assert(false)

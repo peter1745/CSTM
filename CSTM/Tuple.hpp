@@ -4,7 +4,7 @@
 
 #include <concepts>
 
-namespace KSTM {
+namespace CSTM {
 
 	template<typename... Rest>
 	class Tuple;
@@ -14,20 +14,20 @@ namespace KSTM {
 namespace std {
 
 	template<typename... Types>
-	struct tuple_size<Theia::Core::Tuple<Types...>> : std::integral_constant<size_t, sizeof...(Types)> {};
+	struct tuple_size<CSTM::Tuple<Types...>> : std::integral_constant<size_t, sizeof...(Types)> {};
 
 	template<typename First, typename... Rest>
-	struct tuple_element<0, Theia::Core::Tuple<First, Rest...>>
+	struct tuple_element<0, CSTM::Tuple<First, Rest...>>
 	{
 		using type = First;
 	};
 
 	template<size_t Idx, typename First, typename... Rest>
-	struct tuple_element<Idx, Theia::Core::Tuple<First, Rest...>> : tuple_element<Idx - 1, Theia::Core::Tuple<Rest...>> {};
+	struct tuple_element<Idx, CSTM::Tuple<First, Rest...>> : tuple_element<Idx - 1, CSTM::Tuple<Rest...>> {};
 
 }
 
-namespace Theia::Core {
+namespace CSTM {
 
 	struct ExactArgsTag
 	{
@@ -116,7 +116,7 @@ namespace Theia::Core {
 		{
 			if constexpr (IsStringV<First>)
 			{
-				return Theia::Core::byte_count(m_value) + Base::byte_count();
+				return byte_count(m_value) + Base::byte_count();
 			}
 			else
 			{
@@ -230,5 +230,5 @@ namespace Theia::Core {
 	template<typename First, typename... Rest>
 	template<std::same_as<UnpackTupleTag> Tag, typename T, size_t... Indices>
 	constexpr Tuple<First, Rest...>::Tuple(Tag, T&& other, std::index_sequence<Indices...>)
-		: Tuple(ExactArgsTag{}, Theia::Core::at<Indices>(std::forward<T>(other))...) {}
+		: Tuple(ExactArgsTag{}, CSTM::at<Indices>(std::forward<T>(other))...) {}
 }

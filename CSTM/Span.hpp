@@ -37,7 +37,7 @@ namespace CSTM {
 		decltype(auto) operator[](this auto&& self, size_t index)
 		{
 			using Self = decltype(self);
-			TheiaAssert(index < std::forward<Self>(self).count());
+			CSTM_Assert(index < std::forward<Self>(self).count());
 			return std::forward<Self>(self).m_begin[index];
 		}
 

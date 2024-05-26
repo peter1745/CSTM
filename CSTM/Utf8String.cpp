@@ -27,15 +27,15 @@ namespace CSTM {
 	uint32_t CodePointIteratorBase::compute_current_code_point(uint32_t& outCodePointByteCount) const
 	{
 		const auto codePoint = utf8_to_utf32({ m_data[0], m_data[1], m_data[2], m_data[3] }, outCodePointByteCount);
-		TheiaAssert(codePoint.has_value());
+		CSTM_Assert(codePoint.has_value());
 		return codePoint.value();
 	}
 
 	void CodePointIterator::advance_and_read()
 	{
-		TheiaAssert(m_data + m_code_point.byteCount <= m_end);
+		CSTM_Assert(m_data + m_code_point.byteCount <= m_end);
 		m_data += m_code_point.byteCount;
-		TheiaAssert(is_leading_byte(*m_data));
+		CSTM_Assert(is_leading_byte(*m_data));
 		m_code_point.value = compute_current_code_point(m_code_point.byteCount);
 	}
 
@@ -48,7 +48,7 @@ namespace CSTM {
 			searchOffset++;
 		}
 
-		TheiaAssert(m_data - searchOffset >= m_end);
+		CSTM_Assert(m_data - searchOffset >= m_end);
 
 		// 2. Point m_data to the leading byte
 		m_data -= searchOffset;
@@ -188,7 +188,7 @@ namespace CSTM {
 
 	void Utf8String::allocate_from(const byte* data, size_t byteCount)
 	{
-		TheiaAssert(m_byte_count == 0);
+		CSTM_Assert(m_byte_count == 0);
 
 		m_byte_count = byteCount;
 
