@@ -24,6 +24,18 @@ int main(int argc, char* argv[])
 	uint32_t totalFailed = 0;
 	uint32_t totalSkipped = 0;
 
+	bool verbose = false;
+
+	for (int i = 1; i < argc; i++)
+	{
+		std::string_view arg{ argv[i] };
+
+		if (arg == "--verbose" || arg == "-v")
+		{
+			verbose = true;
+		}
+	}
+
 	for (const auto& test : get_tests())
 	{
 		if (argc > 1)
@@ -32,6 +44,13 @@ int main(int argc, char* argv[])
 
 			for (int i = 1; i < argc; i++)
 			{
+				std::string_view arg{ argv[i] };
+
+				if (arg.starts_with('-'))
+				{
+					continue;
+				}
+
 				if (test.category == argv[i])
 				{
 					executeTest = true;
@@ -42,7 +61,12 @@ int main(int argc, char* argv[])
 			if (!executeTest)
 			{
 				totalSkipped++;
-				std::println("[\u001B[33mSKIP\u001B[0m]: {}", test.name);
+
+				if (verbose)
+				{
+					std::println("[\u001B[33mSKIP\u001B[0m]: {}", test.name);
+				}
+
 				continue;
 			}
 		}
