@@ -10,4 +10,7 @@ add_library(${PROJECT_NAME})
 target_sources(${PROJECT_NAME}
         PUBLIC
         File.cpp
-        Utf8String.cpp)
+        Utf8String.cpp
+        String.cpp
+        StringView.cpp
+        CodePointIterator.cpp)

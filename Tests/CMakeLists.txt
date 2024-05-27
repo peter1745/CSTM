@@ -12,7 +12,9 @@ target_sources(${PROJECT_NAME}
         Main.cpp
         Utf8String.cpp
         Result.cpp
-        Concepts.cpp)
+        Concepts.cpp
+        String.cpp
+        StringView.cpp)
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE
