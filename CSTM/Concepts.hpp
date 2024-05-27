@@ -1,5 +1,8 @@
 #pragma once
 
+#include <cstddef>
+#include <utility>
+
 namespace CSTM {
 
 	template<typename Func, typename Return, typename... Args>
