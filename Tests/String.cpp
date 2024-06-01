@@ -78,13 +78,13 @@ DeclTest(string, code_point_iterator)
 	}), true);
 }
 
-DeclTest(string, contains_all)
+DeclTest(string, contains)
 {
 	const auto str = String::create("Hello, World");
-	Cond(Eq, str.contains_all("Hello"), true);
-	Cond(Eq, str.contains_all(std::string{"Hello"}), true);
-	Cond(Eq, str.contains_all(std::string_view{"Hello"}), true);
-	Cond(Eq, str.contains_all("olleH"), false);
+	Cond(Eq, str.contains("Hello"), true);
+	Cond(Eq, str.contains(std::string{"Hello"}), true);
+	Cond(Eq, str.contains(std::string_view{"Hello"}), true);
+	Cond(Eq, str.contains("olleH"), false);
 }
 
 DeclTest(string, contains_any)
@@ -96,3 +96,20 @@ DeclTest(string, contains_any)
 	Cond(Eq, str.contains_any(std::string_view{"Abc"}), false);
 }
 
+DeclTest(string, starts_with)
+{
+	const auto str = String::create("Hello, World");
+	Cond(Eq, str.starts_with("Hello"), true);
+	Cond(Eq, str.starts_with(std::string{"Hello"}), true);
+	Cond(Eq, str.starts_with(std::string_view{"Hello"}), true);
+	Cond(Eq, str.starts_with(std::string_view{"World"}), false);
+}
+
+DeclTest(string, starts_with_any)
+{
+	const auto str = String::create("Hello, World");
+	Cond(Eq, str.starts_with_any("H"), true);
+	Cond(Eq, str.starts_with_any(std::string{"WH"}), true);
+	Cond(Eq, str.starts_with_any(std::string_view{"KJHW"}), true);
+	Cond(Eq, str.starts_with_any(std::string_view{"Abc"}), false);
+}

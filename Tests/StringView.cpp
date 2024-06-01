@@ -32,14 +32,14 @@ DeclTest(string_view, substr_length)
 	Cond(Eq, strView.value(), expectedSubstr);
 }
 
-DeclTest(string_view, contains_all)
+DeclTest(string_view, contains)
 {
 	const auto str = String::create("Hello, World");
 	const auto strView = str.view().value_or({});
-	Cond(Eq, strView.contains_all("Hello"), true);
-	Cond(Eq, strView.contains_all(std::string{"Hello"}), true);
-	Cond(Eq, strView.contains_all(std::string_view{"Hello"}), true);
-	Cond(Eq, strView.contains_all("olleH"), false);
+	Cond(Eq, strView.contains("Hello"), true);
+	Cond(Eq, strView.contains(std::string{"Hello"}), true);
+	Cond(Eq, strView.contains(std::string_view{"Hello"}), true);
+	Cond(Eq, strView.contains("olleH"), false);
 }
 
 DeclTest(string_view, contains_any)
@@ -50,4 +50,24 @@ DeclTest(string_view, contains_any)
 	Cond(Eq, strView.contains_any(std::string{"Wd"}), true);
 	Cond(Eq, strView.contains_any(std::string_view{"Wd"}), true);
 	Cond(Eq, strView.contains_any(std::string_view{"Abc"}), false);
+}
+
+DeclTest(string_view, starts_with)
+{
+	const auto str = String::create("Hello, World");
+	const auto strView = str.view().value_or({});
+	Cond(Eq, strView.starts_with("Hello"), true);
+	Cond(Eq, strView.starts_with(std::string{"Hello"}), true);
+	Cond(Eq, strView.starts_with(std::string_view{"Hello"}), true);
+	Cond(Eq, strView.starts_with(std::string_view{"World"}), false);
+}
+
+DeclTest(string_view, starts_with_any)
+{
+	const auto str = String::create("Hello, World");
+	const auto strView = str.view().value_or({});
+	Cond(Eq, strView.starts_with_any("H"), true);
+	Cond(Eq, strView.starts_with_any(std::string{"WH"}), true);
+	Cond(Eq, strView.starts_with_any(std::string_view{"KJHW"}), true);
+	Cond(Eq, strView.starts_with_any(std::string_view{"Abc"}), false);
 }

@@ -20,7 +20,7 @@ namespace CSTM {
 
 	public:
 		[[nodiscard]]
-		bool contains_all(const std::ranges::contiguous_range auto& chars) const
+		bool contains(const std::ranges::contiguous_range auto& chars) const
 			requires(std::same_as<std::ranges::range_value_t<decltype(chars)>, char>)
 		{
 			const byte* str = data();
@@ -56,6 +56,53 @@ namespace CSTM {
 			for (size_t i = 0; i < length; i++)
 			{
 				if (std::ranges::contains(chars, str[i]))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		[[nodiscard]]
+		bool starts_with(const std::ranges::contiguous_range auto& chars) const
+			requires(std::same_as<std::ranges::range_value_t<decltype(chars)>, char>)
+		{
+			const byte* str = data();
+			const size_t length = byte_count();
+
+			size_t charsSize = std::ranges::size(chars);
+
+			if (chars[charsSize - 1] == '\0')
+			{
+				charsSize--;
+			}
+
+			if (length < charsSize)
+			{
+				return false;
+			}
+
+			for (size_t i = 0; i < charsSize; i++)
+			{
+				if (chars[i] != str[i])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		[[nodiscard]]
+		bool starts_with_any(const std::ranges::contiguous_range auto& chars) const
+			requires(std::same_as<std::ranges::range_value_t<decltype(chars)>, char>)
+		{
+			const byte* str = data();
+
+			for (const auto c : chars)
+			{
+				if (c == str[0])
 				{
 					return true;
 				}
