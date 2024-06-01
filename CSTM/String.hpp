@@ -5,6 +5,7 @@
 #include "Types.hpp"
 #include "HashMap.hpp"
 #include "Result.hpp"
+#include "StringBase.hpp"
 
 namespace CSTM {
 
@@ -16,7 +17,7 @@ namespace CSTM {
 		InvalidLength
 	};
 
-	class String
+	class String : public StringBase
 	{
 		struct LargeStorage
 		{
@@ -39,10 +40,10 @@ namespace CSTM {
 		bool is_large_string() const noexcept { return m_byte_count > SmallStringLength; }
 
 		[[nodiscard]]
-		const byte* data() const noexcept { return is_large_string() ? m_large_storage->data : m_small_storage; }
+		const byte* data() const noexcept override { return is_large_string() ? m_large_storage->data : m_small_storage; }
 
 		[[nodiscard]]
-		uint32_t byte_count() const noexcept { return m_byte_count; }
+		size_t byte_count() const noexcept override { return m_byte_count; }
 
 		[[nodiscard]]
 		bool operator==(const String& other) const noexcept;
@@ -57,7 +58,7 @@ namespace CSTM {
 		String() noexcept = default;
 		String(const String& other) noexcept;
 		String(String&& other) noexcept;
-		~String() noexcept;
+		~String() noexcept override;
 
 		String& operator=(const String& other) noexcept;
 		String& operator=(String&& other) noexcept;

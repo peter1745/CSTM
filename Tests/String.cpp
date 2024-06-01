@@ -1,9 +1,8 @@
 #include "Test.hpp"
 
 #include <String.hpp>
+#include <StringView.hpp>
 #include <CodePointIterator.hpp>
-
-#include <print>
 
 using namespace CSTM;
 
@@ -78,3 +77,22 @@ DeclTest(string, code_point_iterator)
 		return IterAction::Continue;
 	}), true);
 }
+
+DeclTest(string, contains_all)
+{
+	const auto str = String::create("Hello, World");
+	Cond(Eq, str.contains_all("Hello"), true);
+	Cond(Eq, str.contains_all(std::string{"Hello"}), true);
+	Cond(Eq, str.contains_all(std::string_view{"Hello"}), true);
+	Cond(Eq, str.contains_all("olleH"), false);
+}
+
+DeclTest(string, contains_any)
+{
+	const auto str = String::create("Hello, World");
+	Cond(Eq, str.contains_any("Wd"), true);
+	Cond(Eq, str.contains_any(std::string{"Wd"}), true);
+	Cond(Eq, str.contains_any(std::string_view{"Wd"}), true);
+	Cond(Eq, str.contains_any(std::string_view{"Abc"}), false);
+}
+
