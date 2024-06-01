@@ -163,7 +163,6 @@ namespace CSTM {
 				m_large_storage = new LargeStorage();
 				m_large_storage->data = new byte[m_byte_count];
 				m_large_storage->ref_count = 1;
-				m_large_storage->byte_count = m_byte_count;
 				m_large_storage->hash_code = hash;
 
 				StringPool.insert(hash, m_large_storage);

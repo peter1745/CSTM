@@ -22,7 +22,6 @@ namespace CSTM {
 		{
 			byte* data;
 			std::atomic_size_t ref_count;
-			size_t byte_count;
 			size_t hash_code;
 		};
 
