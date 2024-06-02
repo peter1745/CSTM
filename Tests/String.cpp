@@ -131,3 +131,21 @@ DeclTest(string, starts_with_any)
 	Cond(Eq, str.starts_with_any(std::string_view{"KJHW"}), true);
 	Cond(Eq, str.starts_with_any(std::string_view{"Abc"}), false);
 }
+
+DeclTest(string, starts_with_any_code_point)
+{
+	constexpr auto validCodePoints = std::array{ 72u, 101u };
+	constexpr auto invalidCodePoints = std::array{ 108u, 100u };
+	const auto str = String::create("Hello, World");
+	Cond(Eq, str.starts_with_any_code_point(validCodePoints), true);
+	Cond(Eq, str.starts_with_any_code_point(invalidCodePoints), false);
+}
+
+DeclTest(string, ends_with_any_code_point)
+{
+	constexpr auto validCodePoints = std::array{ 114u, 100u };
+	constexpr auto invalidCodePoints = std::array{ 72u, 101u };
+	const auto str = String::create("Hello, World");
+	Cond(Eq, str.ends_with_any_code_point(validCodePoints), true);
+	Cond(Eq, str.ends_with_any_code_point(invalidCodePoints), false);
+}

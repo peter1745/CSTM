@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Types.hpp"
+#include "CodePointIterator.hpp"
 
 #include <algorithm>
 #include <ranges>
@@ -110,6 +111,55 @@ namespace CSTM {
 
 			return false;
 		}
+
+		[[nodiscard]]
+		bool starts_with_any_code_point(const std::ranges::contiguous_range auto& codePoints) const
+			requires(std::same_as<std::ranges::range_value_t<decltype(codePoints)>, uint32_t>)
+		{
+			bool result = false;
+
+			CodePointIterator{ *this }.each([&](const uint32_t codePoint)
+			{
+				for (auto c : codePoints)
+				{
+					if (c == codePoint)
+					{
+						result = true;
+						return IterAction::Break;
+					}
+				}
+
+				// NOTE(Peter): Only check the very first code point
+				return IterAction::Break;
+			});
+
+			return result;
+		}
+
+		[[nodiscard]]
+		bool ends_with_any_code_point(const std::ranges::contiguous_range auto& codePoints) const
+			requires(std::same_as<std::ranges::range_value_t<decltype(codePoints)>, uint32_t>)
+		{
+			bool result = false;
+
+			CodePointReverseIterator{ *this }.each([&](const uint32_t codePoint)
+			{
+				for (auto c : codePoints)
+				{
+					if (c == codePoint)
+					{
+						result = true;
+						return IterAction::Break;
+					}
+				}
+
+				// NOTE(Peter): Only check the very last code point
+				return IterAction::Break;
+			});
+
+			return result;
+		}
+
 	};
 
 }
