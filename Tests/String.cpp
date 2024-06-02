@@ -78,6 +78,24 @@ DeclTest(string, code_point_iterator)
 	}), true);
 }
 
+DeclTest(string, code_point_reverse_iterator)
+{
+	const auto str = String::create("Hello, World");
+	constexpr auto codePoints = std::array{ 100u, 108u, 114u, 111u, 87u, 32u, 44u, 111u, 108u, 108u, 101u, 72u };
+
+	CondManual(CodePointReverseIterator{str}.each([&](const size_t i, const uint32_t cp)
+	{
+		if (codePoints[i] != cp)
+		{
+			pass = false;
+			return IterAction::Break;
+		}
+
+		pass = true;
+		return IterAction::Continue;
+	}), true);
+}
+
 DeclTest(string, contains)
 {
 	const auto str = String::create("Hello, World");

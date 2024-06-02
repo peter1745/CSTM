@@ -1,7 +1,7 @@
 #include "CodePointIterator.hpp"
 #include "Assert.hpp"
 #include "Unicode.hpp"
-#include "String.hpp"
+#include "StringBase.hpp"
 
 namespace CSTM {
 
@@ -19,7 +19,7 @@ namespace CSTM {
 		m_code_point.byteCount = codePointByteCount;
 	}
 
-	CodePointIterator::CodePointIterator(const String& str)
+	CodePointIterator::CodePointIterator(const StringBase& str)
 		: CodePointIteratorBase(str.data(), str.data() + str.byte_count())
 	{
 	}
@@ -35,6 +35,33 @@ namespace CSTM {
 
 		CSTM_Assert(is_leading_byte(*m_current));
 
+		compute_current_code_point();
+		return true;
+	}
+
+	CodePointReverseIterator::CodePointReverseIterator(const StringBase& str)
+		: CodePointIteratorBase(str.data() + str.byte_count(), str.data())
+	{
+	}
+
+	bool CodePointReverseIterator::advance()
+	{
+		// 1. Search backwards from m_current until we find a leading byte
+		size_t searchOffset = 1;
+		while (!is_leading_byte(*(m_current - searchOffset)))
+		{
+			searchOffset++;
+		}
+
+		if (m_current - searchOffset < m_end)
+		{
+			return false;
+		}
+
+		// 2. Point m_current to the leading byte
+		m_current -= searchOffset;
+
+		// 3. Read the leading byte + trailing bytes
 		compute_current_code_point();
 		return true;
 	}

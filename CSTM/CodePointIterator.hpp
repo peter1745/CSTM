@@ -7,7 +7,7 @@
 
 namespace CSTM {
 
-	class String;
+	class StringBase;
 
 	enum class IterAction
 	{
@@ -94,7 +94,15 @@ namespace CSTM {
 	class CodePointIterator final : public CodePointIteratorBase
 	{
 	public:
-		explicit CodePointIterator(const String& str);
+		explicit CodePointIterator(const StringBase& str);
+
+		bool advance() override;
+	};
+
+	class CodePointReverseIterator final : public CodePointIteratorBase
+	{
+	public:
+		explicit CodePointReverseIterator(const StringBase& str);
 
 		bool advance() override;
 	};
