@@ -41,7 +41,7 @@ namespace CSTM {
 		else
 		{
 			std::copy_n(other.m_small_storage, m_byte_count, m_small_storage);
-			std::fill_n(other.m_small_storage, m_byte_count, 0);
+			std::fill_n(other.m_small_storage, SmallStringLength, 0);
 		}
 	}
 
@@ -52,6 +52,11 @@ namespace CSTM {
 
 	String& String::operator=(const String& other) noexcept
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
+
 		try_decrease_ref_count();
 
 		m_byte_count = other.m_byte_count;
@@ -63,6 +68,7 @@ namespace CSTM {
 		}
 		else
 		{
+			std::fill_n(m_small_storage, SmallStringLength, 0);
 			std::copy_n(other.m_small_storage, other.m_byte_count, m_small_storage);
 		}
 
@@ -71,6 +77,11 @@ namespace CSTM {
 
 	String& String::operator=(String&& other) noexcept
 	{
+		if (this == &other)
+		{
+			return *this;
+		}
+
 		try_decrease_ref_count();
 
 		m_byte_count = std::exchange(other.m_byte_count, 0);
@@ -81,8 +92,9 @@ namespace CSTM {
 		}
 		else
 		{
-			std::copy_n(other.m_small_storage, other.m_byte_count, m_small_storage);
-			std::fill_n(other.m_small_storage, m_byte_count, 0);
+			std::fill_n(m_small_storage, SmallStringLength, 0);
+			std::copy_n(other.m_small_storage, m_byte_count, m_small_storage);
+			std::fill_n(other.m_small_storage, SmallStringLength, 0);
 		}
 
 		return *this;
