@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include <atomic>
 
 #include "Types.hpp"
@@ -49,10 +50,29 @@ namespace CSTM {
 		bool operator==(const String& other) const noexcept;
 
 		[[nodiscard]]
-		size_t ref_count() const noexcept { return is_large_string() ? m_large_storage->ref_count.load() : 1uz; }
+		bool operator==(const std::ranges::contiguous_range auto& str) const noexcept
+			requires(std::same_as<std::ranges::range_value_t<decltype(str)>, char>)
+		{
+			size_t strLength = std::ranges::size(str);
+
+			if (str[strLength - 1] == '\0')
+			{
+				strLength--;
+			}
+
+			if (m_byte_count != strLength)
+			{
+				return false;
+			}
+
+			return std::equal(data(), data() + m_byte_count, str);
+		}
 
 		[[nodiscard]]
-		Result<StringView, StringError> view(size_t offset = 0, size_t length = ~0uz) const noexcept;
+		size_t ref_count() const noexcept { return is_large_string() ? m_large_storage->ref_count.load() : 1; }
+
+		[[nodiscard]]
+		Result<StringView, StringError> view(size_t offset = 0, size_t length = ~0) const noexcept;
 
 	public:
 		String() noexcept = default;

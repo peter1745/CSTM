@@ -117,7 +117,7 @@ namespace CSTM {
 			return StringError::InvalidOffset;
 		}
 
-		if (length == ~0uz)
+		if (length == ~0)
 		{
 			length = m_byte_count - offset;
 		}
