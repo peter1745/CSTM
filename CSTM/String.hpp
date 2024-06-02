@@ -7,6 +7,7 @@
 #include "HashMap.hpp"
 #include "Result.hpp"
 #include "StringBase.hpp"
+#include "Span.hpp"
 
 namespace CSTM {
 
@@ -32,6 +33,7 @@ namespace CSTM {
 
 	public:
 		static String create(const char* str);
+		static String create(Span<uint32_t> codePoints);
 
 	public:
 		[[nodiscard]]
@@ -73,6 +75,47 @@ namespace CSTM {
 
 		[[nodiscard]]
 		Result<StringView, StringError> view(size_t offset = 0, size_t length = ~0) const noexcept;
+
+		[[nodiscard]]
+		Result<String, StringError> remove_leading_code_points(const std::ranges::contiguous_range auto& codePoints) const noexcept
+		{
+			return remove_code_points_impl<CodePointIterator>(codePoints);
+		}
+
+		[[nodiscard]]
+		Result<String, StringError> remove_trailing_code_points(const std::ranges::contiguous_range auto& codePoints) const noexcept
+		{
+			return remove_code_points_impl<CodePointReverseIterator>(codePoints);
+		}
+
+	private:
+		template<std::derived_from<CodePointIteratorBase> Iterator>
+		[[nodiscard]]
+		Result<String, StringError> remove_code_points_impl(const std::ranges::contiguous_range auto& codePoints) const noexcept
+		{
+			std::vector<uint32_t> originalCodePoints;
+			Iterator{ *this }.store(originalCodePoints);
+
+			auto it = originalCodePoints.begin();
+			while (it != originalCodePoints.end() && std::ranges::contains(codePoints, *it))
+			{
+				it++;
+			}
+
+			if (it == originalCodePoints.begin() || it == originalCodePoints.end())
+			{
+				return *this;
+			}
+
+			originalCodePoints.erase(originalCodePoints.begin(), it);
+
+			if constexpr (std::same_as<CodePointReverseIterator, Iterator>)
+			{
+				std::ranges::reverse(originalCodePoints);
+			}
+
+			return create(originalCodePoints);
+		}
 
 	public:
 		String() noexcept = default;

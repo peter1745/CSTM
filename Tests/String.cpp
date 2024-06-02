@@ -149,3 +149,19 @@ DeclTest(string, ends_with_any_code_point)
 	Cond(Eq, str.ends_with_any_code_point(validCodePoints), true);
 	Cond(Eq, str.ends_with_any_code_point(invalidCodePoints), false);
 }
+
+DeclTest(string, remove_leading_code_points)
+{
+	constexpr auto toRemove = std::array{ 101u, 72u, 108u };
+	auto str = String::create("Hello, World");
+	str = str.remove_leading_code_points(toRemove).value_or(str);
+	Cond(Eq, str, "o, World");
+}
+
+DeclTest(string, remove_trailing_code_points)
+{
+	constexpr auto toRemove = std::array{ 108u, 114u, 100u };
+	auto str = String::create("Hello, World");
+	str = str.remove_trailing_code_points(toRemove).value_or(str);
+	Cond(Eq, str, "Hello, Wo");
+}

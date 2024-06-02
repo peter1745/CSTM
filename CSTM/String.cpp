@@ -1,6 +1,7 @@
 #include "Assert.hpp"
 #include "String.hpp"
 #include "StringView.hpp"
+#include "Unicode.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -14,6 +15,26 @@ namespace CSTM {
 		static_assert(CHAR_BIT == 8);
 		String string;
 		string.allocate_from(reinterpret_cast<const byte*>(str), std::char_traits<char>::length(str));
+		return string;
+	}
+
+	String String::create(Span<uint32_t> codePoints)
+	{
+		std::vector<byte> codePointBytes;
+
+		for (auto codePoint : codePoints)
+		{
+			uint32_t byteCount = 0;
+			auto bytes = utf32_to_utf8(codePoint, byteCount);
+
+			for (uint32_t i = 0; i < byteCount; i++)
+			{
+				codePointBytes.push_back(bytes[i]);
+			}
+		}
+
+		String string;
+		string.allocate_from(codePointBytes.data(), codePointBytes.size());
 		return string;
 	}
 

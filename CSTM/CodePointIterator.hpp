@@ -4,6 +4,7 @@
 #include "Utility.hpp"
 
 #include <concepts>
+#include <vector>
 
 namespace CSTM {
 
@@ -75,6 +76,14 @@ namespace CSTM {
 					i++;
 				}
 			}
+		}
+
+		void store(std::vector<uint32_t>& container)
+		{
+			each([&](const uint32_t codePoint)
+			{
+				container.push_back(codePoint);
+			});
 		}
 
 	protected:
