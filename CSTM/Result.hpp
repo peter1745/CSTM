@@ -156,7 +156,7 @@ namespace CSTM {
 		}
 
 		[[nodiscard]]
-		constexpr decltype(auto) value_or(this auto&& self, V&& defaultValue)
+		constexpr decltype(auto) value_or(this auto&& self, V defaultValue)
 		{
 			using Self = decltype(self);
 
@@ -177,7 +177,7 @@ namespace CSTM {
 		}
 
 		[[nodiscard]]
-		constexpr decltype(auto) error_or(this auto&& self, E&& defaultError)
+		constexpr decltype(auto) error_or(this auto&& self, E defaultError)
 		{
 			using Self = decltype(self);
 
