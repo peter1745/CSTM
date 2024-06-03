@@ -2,7 +2,7 @@
 
 #include "Utility.hpp"
 
-namespace KSTM {
+namespace CSTM {
 
 	template<typename T>
 	struct ScopedValue
@@ -11,7 +11,7 @@ namespace KSTM {
 	};
 
 	template<>
-	struct ScopedValue<NullTag> {};
+	struct ScopedValue<NullType> {};
 
 	template<typename T, typename D>
 	class ScopedT
@@ -28,9 +28,9 @@ namespace KSTM {
 				return;
 			}
 
-			if constexpr (!std::same_as<D, NullTag>)
+			if constexpr (!std::same_as<D, NullType>)
 			{
-				if constexpr (!std::same_as<T, NullTag>)
+				if constexpr (!std::same_as<T, NullType>)
 				{
 					m_deferred.value(m_value.value);
 				}
@@ -76,7 +76,7 @@ namespace KSTM {
 		}
 
 		template<typename Self>
-			requires(!std::same_as<T, NullTag>)
+			requires(!std::same_as<T, NullType>)
 		decltype(auto) value(this Self&& self)
 		{
 			return std::forward_like<Self>(self.m_value.value);
@@ -87,8 +87,8 @@ namespace KSTM {
 			: m_value(value), m_deferred(deferred) {}
 
 	private:
-		HeliosNoUniqueAddr ScopedValue<T> m_value;
-		HeliosNoUniqueAddr ScopedValue<D> m_deferred;
+		CSTM_NoUniqueAddr ScopedValue<T> m_value;
+		CSTM_NoUniqueAddr ScopedValue<D> m_deferred;
 		bool m_dismissed = false;
 
 		friend struct Scoped;
@@ -108,26 +108,26 @@ namespace KSTM {
 		auto init_with(Func&& func)
 		{
 			auto value = std::invoke(std::forward<Func>(func));
-			return ScopedT<decltype(value), NullTag>{
+			return ScopedT<decltype(value), NullType>{
 				ScopedValue{value},
-				ScopedValue<NullTag>{}
+				ScopedValue<NullType>{}
 			};
 		}
 
 		template<typename T>
 		auto init_with(T&& value)
 		{
-			return ScopedT<T, NullTag>{
+			return ScopedT<T, NullType>{
 				ScopedValue{value},
-				ScopedValue<NullTag>{}
+				ScopedValue<NullType>{}
 			};
 		}
 
 		template<typename Func>
 		auto defer(Func&& func)
 		{
-			return ScopedT<NullTag, Func>{
-				ScopedValue<NullTag>{},
+			return ScopedT<NullType, Func>{
+				ScopedValue<NullType>{},
 				ScopedValue{func}
 			};
 		}
