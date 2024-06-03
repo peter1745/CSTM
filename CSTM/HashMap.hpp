@@ -194,7 +194,7 @@ namespace CSTM {
 				}
 			}
 
-			m_buckets = std::move(buckets);
+			m_buckets = CSTM_Move(buckets);
 			m_bucket_count = bucketCount;
 		}
 
@@ -226,8 +226,8 @@ namespace CSTM {
 
 		void move_construct(BasicHashMap&& other) noexcept
 		{
-			m_buckets = std::move(other.m_buckets);
-			m_hasher = std::move(other.m_hasher);
+			m_buckets = CSTM_Move(other.m_buckets);
+			m_hasher = CSTM_Move(other.m_hasher);
 			m_element_count = other.m_element_count;
 			m_bucket_count = other.m_bucket_count;
 

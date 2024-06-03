@@ -48,7 +48,7 @@ namespace CSTM {
 			auto value = std::invoke(std::forward<Func>(func));
 			return ScopedT<decltype(value), D>{
 				ScopedValue{value},
-				std::move(m_deferred)
+				CSTM_Move(m_deferred)
 			};
 		}
 
@@ -57,7 +57,7 @@ namespace CSTM {
 		{
 			return ScopedT<decltype(value), D>{
 				ScopedValue{value},
-				std::move(m_deferred)
+				CSTM_Move(m_deferred)
 			};
 		}
 
@@ -65,7 +65,7 @@ namespace CSTM {
 		auto defer(D2&& func)
 		{
 			return ScopedT<T, D2>{
-				std::move(m_value),
+				CSTM_Move(m_value),
 				ScopedValue{std::forward<D2>(func)}
 			};
 		}

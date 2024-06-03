@@ -93,6 +93,10 @@ namespace CSTM {
 	template<template<typename...> typename Template, typename... Types>
 	inline constexpr bool IsSpecialization<Template<Types...>, Template> = true;
 
+	// constexpr versions of std::isalpha and std::isdigit
+	constexpr bool is_alpha(const char c) noexcept { return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'); }
+	constexpr bool is_digit(const char c) noexcept { return c >= '0' && c <='9'; }
+
 	inline bool is_hexadecimal(byte b) noexcept
 	{
 		return std::isxdigit(b) > 0;
@@ -120,5 +124,39 @@ namespace CSTM {
 
 		return result.Value;
 	};
+
+	template<typename T>
+	constexpr std::remove_reference_t<T>&& move_always(T&& obj)
+	{
+		static_assert(!std::is_const_v<std::remove_reference_t<T>>);
+		return static_cast<std::remove_reference_t<T>&&>(obj);
+	}
+
+	template<typename DecltypeT, bool IsIdExpression, typename T>
+	constexpr std::remove_reference_t<T>&& move_impl(T&& obj)
+	{
+		static_assert(!std::is_const_v<std::remove_reference_t<T>>);
+		static_assert(!std::is_lvalue_reference_v<DecltypeT>);
+		static_assert(IsIdExpression);
+		return static_cast<std::remove_reference_t<T>&&>(obj);
+	}
+
+	constexpr bool is_id_expression(const char* const expr)
+	{
+		for (auto str = expr; *str; ++str)
+		{
+			if (!is_alpha(*str) && !is_digit(*str) && *str != '_' && *str != ':')
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+#define CSTM_IsIdExpression(...) ::CSTM::is_id_expression(#__VA_ARGS__)
+
+// Safer std::move implementation (https://www.youtube.com/watch?v=hvnl6T2MnUk)
+#define CSTM_Move(obj) ::CSTM::move_impl<decltype(obj), CSTM_IsIdExpression(obj)>(obj)
 
 }
