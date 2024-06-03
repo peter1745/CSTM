@@ -99,14 +99,19 @@ namespace CSTM {
 			m_element_count--;
 		}
 
+		[[nodiscard]]
 		bool contains(const Key& key) const noexcept
 		{
 			return find_key_bucket(key).has_value();
 		}
 
+		[[nodiscard]]
 		size_t element_count() const noexcept { return m_element_count; }
+
+		[[nodiscard]]
 		size_t bucket_count() const noexcept { return m_bucket_count; }
 
+		[[nodiscard]]
 		bool is_empty() const noexcept { return m_element_count == 0; }
 
 		void clear()
