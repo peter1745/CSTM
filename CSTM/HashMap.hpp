@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Assert.hpp"
 #include "Hash.hpp"
 #include "Result.hpp"
 
@@ -40,7 +41,9 @@ namespace CSTM {
 		{}
 
 		explicit BasicHashMap(size_t bucketCount)
-			: m_buckets(new BucketType[bucketCount]), m_element_count(0), m_bucket_count(bucketCount) {}
+			: m_buckets(new BucketType[bucketCount]), m_element_count(0), m_bucket_count(bucketCount)
+		{
+		}
 
 		BasicHashMap(const BasicHashMap& other) noexcept
 		{
@@ -63,6 +66,8 @@ namespace CSTM {
 
 			force_rehash(m_bucket_count);
 		}
+
+		~BasicHashMap() = default;
 
 		BasicHashMap& operator=(const BasicHashMap& other) noexcept
 		{
@@ -95,7 +100,6 @@ namespace CSTM {
 				.value();
 
 			it.first.erase(it.second);
-
 			m_element_count--;
 		}
 
@@ -166,7 +170,7 @@ namespace CSTM {
 				return Result<BucketIt, NullType>{ Null };
 			}
 
-			return Result<BucketIt, NullType>{ BucketIt{ bucket, it } };
+			return Result<BucketIt, NullType>{ BucketIt{ std::forward<BucketType>(bucket), it } };
 		}
 
 		void try_rehash()

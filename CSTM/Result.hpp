@@ -319,7 +319,6 @@ namespace CSTM {
 			requires(std::is_lvalue_reference_v<V>)
 			: m_value(&std::forward<U>(value)), m_state(State::Value) {}
 
-
 		constexpr BasicResult(ResultErrorTag, const E& err) noexcept
 			: m_error(err), m_state(State::Error) {}
 
