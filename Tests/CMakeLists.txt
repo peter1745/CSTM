@@ -15,7 +15,8 @@ target_sources(${PROJECT_NAME}
         Concepts.cpp
         String.cpp
         StringView.cpp
-        HashMap.cpp)
+        HashMap.cpp
+        FunctionRef.cpp)
 
 target_include_directories(${PROJECT_NAME}
         PRIVATE
