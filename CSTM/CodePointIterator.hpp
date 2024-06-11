@@ -2,6 +2,7 @@
 
 #include "Types.hpp"
 #include "Utility.hpp"
+#include "Result.hpp"
 
 #include <concepts>
 #include <vector>
@@ -78,12 +79,46 @@ namespace CSTM {
 			}
 		}
 
-		void store(std::vector<uint32_t>& container)
+		void store(std::vector<uint32_t>& container, size_t start = 0, size_t end = ~0)
 		{
-			each([&](const uint32_t codePoint)
+			each([&](const size_t i, const uint32_t codePoint)
 			{
+				if (i < start)
+				{
+					return IterAction::Continue;
+				}
+
+				if (i >= end)
+				{
+					return IterAction::Break;
+				}
+
 				container.push_back(codePoint);
+				return IterAction::Continue;
 			});
+		}
+
+		Result<uint32_t, NullType> code_point_at(size_t index)
+		{
+			uint32_t cp;
+			each([&](const size_t i, const uint32_t codePoint)
+			{
+				if (i == index)
+				{
+					cp = codePoint;
+					return IterAction::Break;
+				}
+
+				return IterAction::Continue;
+			});
+			return cp;
+		}
+
+		size_t count()
+		{
+			size_t c = 0;
+			each([&](const uint32_t){ c++; });
+			return c;
 		}
 
 	protected:

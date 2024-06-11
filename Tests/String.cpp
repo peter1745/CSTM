@@ -141,6 +141,15 @@ DeclTest(string, starts_with_any_code_point)
 	Cond(Eq, str.starts_with_any_code_point(invalidCodePoints), false);
 }
 
+DeclTest(string, ends_with)
+{
+	const auto str = String::create("Hello, World");
+	Cond(Eq, str.ends_with("World"), true);
+	Cond(Eq, str.ends_with(std::string{"World"}), true);
+	Cond(Eq, str.ends_with(std::string_view{"World"}), true);
+	Cond(Eq, str.ends_with(std::string_view{"Hello"}), false);
+}
+
 DeclTest(string, ends_with_any_code_point)
 {
 	constexpr auto validCodePoints = std::array{ 114u, 100u };
@@ -164,4 +173,18 @@ DeclTest(string, remove_trailing_code_points)
 	auto str = String::create("Hello, World");
 	str = str.remove_trailing_code_points(toRemove).value_or(str);
 	Cond(Eq, str, "Hello, Wo");
+}
+
+DeclTest(string, remove)
+{
+	auto str = String::create("Hello, Hel, World, Hello my world");
+	str = str.remove("Hello").value_or(str);
+	Cond(Eq, str, ", Hel, World,  my world");
+}
+
+DeclTest(string, remove_any)
+{
+	auto str = String::create("Hello, World");
+	str = str.remove_any("l").value_or(str);
+	Cond(Eq, str, "Heo, Word");
 }

@@ -137,6 +137,36 @@ namespace CSTM {
 		}
 
 		[[nodiscard]]
+		bool ends_with(const std::ranges::contiguous_range auto& chars) const
+			requires(std::same_as<std::ranges::range_value_t<decltype(chars)>, char>)
+		{
+			const byte* str = data();
+			const size_t length = byte_count();
+
+			size_t charsSize = std::ranges::size(chars);
+
+			if (chars[charsSize - 1] == '\0')
+			{
+				charsSize--;
+			}
+
+			if (length < charsSize)
+			{
+				return false;
+			}
+
+			for (size_t i = length - charsSize, j = 0; i < length && j < charsSize; i++, j++)
+			{
+				if (chars[j] != str[i])
+				{
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		[[nodiscard]]
 		bool ends_with_any_code_point(const std::ranges::contiguous_range auto& codePoints) const
 			requires(std::same_as<std::ranges::range_value_t<decltype(codePoints)>, uint32_t>)
 		{

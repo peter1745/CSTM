@@ -38,6 +38,13 @@ namespace CSTM {
 		return string;
 	}
 
+	String String::create(Span<byte> bytes)
+	{
+		String string;
+		string.allocate_from(bytes.begin(), bytes.byte_count());
+		return string;
+	}
+
 	String::String(const String& other) noexcept
 		: m_byte_count(other.m_byte_count)
 	{
@@ -204,6 +211,7 @@ namespace CSTM {
 			{
 				m_large_storage = StringPool[hash];
 				m_large_storage->ref_count++;
+				return;
 			}
 		}
 

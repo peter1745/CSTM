@@ -17,7 +17,6 @@ namespace CSTM {
 	};
 
 	CSTM_TagType(ResultValueTag);
-
 	CSTM_TagType(ResultErrorTag);
 
 	template<typename V, typename E>
@@ -54,7 +53,7 @@ namespace CSTM {
 
 		constexpr ~BasicResult()
 		{
-			if constexpr (!std::is_trivially_destructible_v<V> && std::same_as<ValueType, V>)
+			if constexpr (!std::is_trivially_destructible_v<V> && !std::is_pointer_v<ValueType>)
 			{
 				if (m_state == State::Value)
 				{

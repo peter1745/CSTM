@@ -34,6 +34,7 @@ namespace CSTM {
 	public:
 		static String create(const char* str);
 		static String create(Span<uint32_t> codePoints);
+		static String create(Span<byte> bytes);
 
 	public:
 		[[nodiscard]]
@@ -47,6 +48,9 @@ namespace CSTM {
 
 		[[nodiscard]]
 		size_t byte_count() const noexcept override { return m_byte_count; }
+
+		[[nodiscard]]
+		byte byte_at(const size_t index) const { return data()[index]; }
 
 		[[nodiscard]]
 		bool operator==(const String& other) const noexcept;
@@ -77,6 +81,81 @@ namespace CSTM {
 		Result<StringView, StringError> view(size_t offset = 0, size_t length = ~0) const noexcept;
 
 		[[nodiscard]]
+		Result<String, StringError> remove(const std::ranges::contiguous_range auto& str) const noexcept
+			requires(std::same_as<std::ranges::range_value_t<decltype(str)>, char>)
+		{
+			std::vector<byte> originalChars;
+			originalChars.resize(m_byte_count);
+
+			std::ranges::copy(data(), data() + m_byte_count, originalChars.begin());
+
+			auto it = std::ranges::find(originalChars, str[0]);
+
+			if (it == originalChars.end())
+			{
+				return *this;
+			}
+
+			size_t strLength = std::ranges::size(str);
+
+			if (str[strLength - 1] == '\0')
+			{
+				strLength--;
+			}
+
+			if (m_byte_count < strLength)
+			{
+				return *this;
+			}
+
+			auto strBegin = std::ranges::begin(str);
+			auto strEnd = std::next(strBegin, strLength - 1);
+
+			while (it != originalChars.end())
+			{
+				auto end = std::ranges::find(it, originalChars.end(), str[strLength - 1]);
+
+				if (end == originalChars.end())
+				{
+					return *this;
+				}
+
+				if (std::distance(it, end) != strLength - 1)
+				{
+					// Character range can't possibly contain the given string, keep searching
+					it = std::ranges::find(std::next(it), originalChars.end(), str[0]);
+					continue;
+				}
+
+				if (std::equal(it, end, strBegin, strEnd))
+				{
+					it = originalChars.erase(it, std::next(end));
+				}
+			}
+
+			return create(Span<byte>(originalChars));
+		}
+
+		[[nodiscard]]
+		Result<String, StringError> remove_any(const std::ranges::contiguous_range auto& chars) const noexcept
+			requires(std::same_as<std::ranges::range_value_t<decltype(chars)>, char>)
+		{
+			std::vector<byte> originalChars;
+			originalChars.resize(m_byte_count);
+
+			std::ranges::copy(data(), data() + m_byte_count, originalChars.begin());
+
+			auto toErase = std::ranges::remove_if(originalChars, [&](byte c)
+			{
+				return std::ranges::contains(chars, c);
+			});
+
+			originalChars.erase(toErase.begin(), toErase.end());
+
+			return create(Span<byte>(originalChars));
+		}
+
+		[[nodiscard]]
 		Result<String, StringError> remove_leading_code_points(const std::ranges::contiguous_range auto& codePoints) const noexcept
 		{
 			return remove_code_points_impl<CodePointIterator>(codePoints);
@@ -86,6 +165,16 @@ namespace CSTM {
 		Result<String, StringError> remove_trailing_code_points(const std::ranges::contiguous_range auto& codePoints) const noexcept
 		{
 			return remove_code_points_impl<CodePointReverseIterator>(codePoints);
+		}
+
+		[[nodiscard]]
+		Result<String, StringError> append_code_points(const std::ranges::contiguous_range auto& codePoints) const noexcept
+			requires(std::same_as<std::ranges::range_value_t<decltype(codePoints)>, uint32_t>)
+		{
+			std::vector<uint32_t> originalCodePoints;
+			CodePointIterator{ *this }.store(originalCodePoints);
+			originalCodePoints.insert(originalCodePoints.end(), std::ranges::begin(codePoints), std::ranges::end(codePoints));
+			return create(Span<uint32_t>{ originalCodePoints });
 		}
 
 	private:
@@ -114,7 +203,7 @@ namespace CSTM {
 				std::ranges::reverse(originalCodePoints);
 			}
 
-			return create(originalCodePoints);
+			return create(Span<uint32_t>(originalCodePoints));
 		}
 
 	public:
