@@ -33,6 +33,7 @@ namespace CSTM {
 
 	public:
 		static String create(const char* str);
+		static String create(std::string_view str);
 		static String create(Span<uint32_t> codePoints);
 		static String create(Span<byte> bytes);
 

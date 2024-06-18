@@ -18,6 +18,13 @@ namespace CSTM {
 		return string;
 	}
 
+	String String::create(std::string_view str)
+	{
+		String string;
+		string.allocate_from(reinterpret_cast<const byte*>(str.data()), str.length());
+		return string;
+	}
+
 	String String::create(Span<uint32_t> codePoints)
 	{
 		std::vector<byte> codePointBytes;
